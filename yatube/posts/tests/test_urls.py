@@ -115,10 +115,10 @@ class PostUrlTests(TestCase):
                 response_guest = self.guest_client.get(url)
                 response_authorized = self.authorized_client.get(url)
                 # self.assertTrue(response, '/accounts/login/')
-                self.assertRedirects(response_guest, (
-                    f'/auth/login/?next={url}')
+                self.assertRedirects(response_guest,
+                                     (f'/auth/login/?next={url}')
                                      )
                 if url == HTTPStatus.FOUND:
-                    self.assertRedirects(response_authorized, (
-                        f'/posts/{self.post.pk}/')
+                    self.assertRedirects(response_authorized,
+                                         (f'/posts/{self.post.pk}/')
                                          )
