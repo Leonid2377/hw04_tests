@@ -58,7 +58,7 @@ class PostCreateFormTests(TestCase):
         post = posts[0]
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group.id, form_data['group'])
-        self.assertEqual(post.author, USERNAME)
+        self.assertEqual(post.author, self.user)
         self.assertRedirects(response, self.PROFILE)
 
     def test_editing_post(self):
