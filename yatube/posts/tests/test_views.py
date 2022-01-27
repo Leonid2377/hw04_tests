@@ -14,7 +14,7 @@ GROUP_1 = reverse('posts:group',
                   kwargs={'slug': SLUG_1})
 PROFILE = reverse('posts:profile',
                   kwargs={'username': USERNAME})
-
+TOTAL_POST = NUMBER_POSTS_ON_PAGE + 1
 
 class PostUrlTests(TestCase):
     @classmethod
@@ -41,7 +41,6 @@ class PostUrlTests(TestCase):
 
     def setUp(self):
         self.guest_client = Client()  # Гость
-        self.user = self.user
         self.authorized_client = Client()  # Авторизованный
         self.authorized_client.force_login(self.user)
 
@@ -63,19 +62,15 @@ class PostUrlTests(TestCase):
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
                 if obj == 'page_obj':
-                    context = response.context[obj]
-                    self.assertEqual(len(context), 1)
-                    self.assertIn(self.post, response.context['page_obj'])
-                    context = context[0]
-                    for post in response.context[obj]:
-                        self.assertEqual(post.group, self.group)
-                        self.assertEqual(post.author, self.user)
+                    post = response.context[obj]
+                    self.assertEqual(len(post), 1)
+                    post = post[0]
                 elif obj == 'post':
-                    context = response.context['post']
-                self.assertEqual(context.text, self.post.text)
-                self.assertEqual(context.author, self.post.author)
-                self.assertEqual(context.group, self.post.group)
-                self.assertEqual(context.pk, self.post.pk)
+                    post = response.context['post']
+                self.assertEqual(post.text, self.post.text)
+                self.assertEqual(post.author, self.post.author)
+                self.assertEqual(post.group, self.post.group)
+                self.assertEqual(post.pk, self.post.pk)
 
 
 class PaginatorViewsTest(TestCase):
@@ -83,12 +78,11 @@ class PaginatorViewsTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.user = User.objects.create_user(username='tester')
-        cls.i = 15
         Post.objects.bulk_create([
             Post(
                 text='Тестовый текст',
                 author=cls.user,
-            ) for i in range(cls.i)
+            ) for i in range(TOTAL_POST)
         ])
 
     def test_first_page_contains_records(self):
@@ -98,5 +92,7 @@ class PaginatorViewsTest(TestCase):
 
     def test_second_page_contains_records(self):
         response = self.client.get(f'{INDEX}?page=2')
-        self.assertEqual(len(response.context['page_obj']),
-                         NUMBER_POSTS_ON_PAGE - (self.i - 10))
+        calculation_len_obj = len(response.context['page_obj'])
+        calculation_obj = TOTAL_POST % NUMBER_POSTS_ON_PAGE
+        self.assertEqual(calculation_len_obj, calculation_obj)
+

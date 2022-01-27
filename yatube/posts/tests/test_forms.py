@@ -5,13 +5,14 @@ from ..forms import forms
 from ..models import Group, Post, User
 
 CREATE_POST = reverse('posts:post_create')
+USERNAME = 'tester'
 
 
 class PostCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username='tester')
+        cls.user = User.objects.create_user(username=USERNAME)
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
             slug='test-slug',
@@ -31,7 +32,7 @@ class PostCreateFormTests(TestCase):
         cls.EDITE_POST = reverse('posts:post_edit',
                                  kwargs={'post_id': cls.post.id})
         cls.PROFILE = reverse('posts:profile',
-                              kwargs={'username': cls.user})
+                              kwargs={'username': USERNAME})
         cls.POST_DETAIL = reverse('posts:post_detail',
                                   kwargs={'post_id': cls.post.id})
 
@@ -57,7 +58,7 @@ class PostCreateFormTests(TestCase):
         post = posts[0]
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group.id, form_data['group'])
-        self.assertEqual(post.author, self.user)
+        self.assertEqual(post.author, USERNAME)
         self.assertRedirects(response, self.PROFILE)
 
     def test_editing_post(self):
