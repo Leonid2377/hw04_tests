@@ -16,6 +16,7 @@ PROFILE = reverse('posts:profile',
                   kwargs={'username': USERNAME})
 TOTAL_POST = NUMBER_POSTS_ON_PAGE + 1
 
+
 class PostUrlTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -95,4 +96,3 @@ class PaginatorViewsTest(TestCase):
         calculation_len_obj = len(response.context['page_obj'])
         calculation_obj = TOTAL_POST % NUMBER_POSTS_ON_PAGE
         self.assertEqual(calculation_len_obj, calculation_obj)
-
