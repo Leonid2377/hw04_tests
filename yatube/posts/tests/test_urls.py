@@ -58,7 +58,9 @@ class PostUrlTests(TestCase):
         ]
         for url, template in templates_url_names:
             with self.subTest(url=url):
-                self.assertTemplateUsed(self.authorized_client.get(url), template)
+                self.assertTemplateUsed(
+                    self.authorized_client.get(url), template
+                )
 
     def test_urs_exists_at_desired_location_guest(self):
         """Страницы доступны любому пользователю."""
@@ -66,13 +68,27 @@ class PostUrlTests(TestCase):
             [INDEX, self.guest_client.get(INDEX), HTTPStatus.OK],
             [GROUP, self.guest_client.get(GROUP), HTTPStatus.OK],
             [PROFILE, self.guest_client.get(PROFILE), HTTPStatus.OK],
-            [self.POST_DETAIL, self.guest_client.get(self.POST_DETAIL), HTTPStatus.OK],
-            [CREATE_POST, self.guest_client.get(CREATE_POST), HTTPStatus.FOUND],
-            [CREATE_POST, self.authorized_client.get(CREATE_POST), HTTPStatus.OK],
-            [self.EDITE_POST, self.authorized_client.get(self.EDITE_POST), HTTPStatus.OK],
-            [self.EDITE_POST, self.guest_client.get(self.EDITE_POST), HTTPStatus.FOUND],
-            [UNEXISTING, self.guest_client.get(UNEXISTING), HTTPStatus.NOT_FOUND],
-            [UNEXISTING, self.authorized_client.get(UNEXISTING), HTTPStatus.NOT_FOUND]
+            [self.POST_DETAIL,
+             self.guest_client.get(self.POST_DETAIL),
+             HTTPStatus.OK],
+            [CREATE_POST,
+             self.guest_client.get(CREATE_POST),
+             HTTPStatus.FOUND],
+            [CREATE_POST,
+             self.authorized_client.get(CREATE_POST),
+             HTTPStatus.OK],
+            [self.EDITE_POST,
+             self.authorized_client.get(self.EDITE_POST),
+             HTTPStatus.OK],
+            [self.EDITE_POST,
+             self.guest_client.get(self.EDITE_POST),
+             HTTPStatus.FOUND],
+            [UNEXISTING,
+             self.guest_client.get(UNEXISTING),
+             HTTPStatus.NOT_FOUND],
+            [UNEXISTING,
+             self.authorized_client.get(UNEXISTING),
+             HTTPStatus.NOT_FOUND]
 
         ]
         for url, user, answer in templates_url_names:
@@ -99,6 +115,10 @@ class PostUrlTests(TestCase):
                 response_guest = self.guest_client.get(url)
                 response_authorized = self.authorized_client.get(url)
                 # self.assertTrue(response, '/accounts/login/')
-                self.assertRedirects(response_guest, (f'/auth/login/?next={url}'))
+                self.assertRedirects(response_guest, (
+                    f'/auth/login/?next={url}')
+                                     )
                 if url == HTTPStatus.FOUND:
-                    self.assertRedirects(response_authorized, (f'/posts/{self.post.pk}/'))
+                    self.assertRedirects(response_authorized, (
+                        f'/posts/{self.post.pk}/')
+                                         )

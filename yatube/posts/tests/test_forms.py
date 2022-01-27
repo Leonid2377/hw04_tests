@@ -31,7 +31,7 @@ class PostCreateFormTests(TestCase):
         cls.EDITE_POST = reverse('posts:post_edit',
                                  kwargs={'post_id': cls.post.id})
         cls.PROFILE = reverse('posts:profile',
-                          kwargs={'username': cls.user})
+                              kwargs={'username': cls.user})
         cls.POST_DETAIL = reverse('posts:post_detail',
                                   kwargs={'post_id': cls.post.id})
 
