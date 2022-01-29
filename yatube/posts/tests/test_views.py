@@ -65,18 +65,28 @@ class PostUrlTests(TestCase):
                 if obj == 'page_obj':
                     posts = response.context[obj]
                     self.assertEqual(len(posts), 1)
-                    posts = posts[0]
-                    # for obj in responses[]
+                    post = posts[0]
                 elif obj == 'post':
-                    posts = response.context['post']
-                elif url == PROFILE:
-                    self.assertEqual(response.context['author'], self.user)
-                elif url == GROUP:
-                    self.assertEqual(response.context['group'], self.group)
-                self.assertEqual(posts.text, self.post.text)
-                self.assertEqual(posts.author, self.post.author)
-                self.assertEqual(posts.group, self.post.group)
-                self.assertEqual(posts.pk, self.post.pk)
+                    post = response.context['post']
+                self.assertEqual(post.text, self.post.text)
+                self.assertEqual(post.author, self.post.author)
+                self.assertEqual(post.group, self.post.group)
+                self.assertEqual(post.pk, self.post.pk)
+
+    def test_author_in_context_profile(self):
+        '''Автор в контексте профиля'''
+        response = self.authorized_client.get(PROFILE)
+        self.assertEqual(response.context['author'], self.user)
+
+    def test_group_in_context_group(self):
+        '''Группа в контексте Групп-ленты'''
+        response = self.authorized_client.get(GROUP)
+        self.assertEqual(response.context['group'], self.group)
+        self.assertEqual(response.context['group'].title, self.group.title)
+        self.assertEqual(response.context['group'].slug, self.group.slug)
+        self.assertEqual(response.context['group'].description,
+                         self.group.description
+                         )
 
 
 class PaginatorViewsTest(TestCase):
