@@ -6,6 +6,8 @@ from ..models import Group, Post, User
 
 CREATE_POST = reverse('posts:post_create')
 USERNAME = 'tester'
+PROFILE = reverse('posts:profile',
+                  kwargs={'username': USERNAME})
 
 
 class PostCreateFormTests(TestCase):
@@ -31,8 +33,6 @@ class PostCreateFormTests(TestCase):
 
         cls.EDITE_POST = reverse('posts:post_edit',
                                  kwargs={'post_id': cls.post.id})
-        cls.PROFILE = reverse('posts:profile',
-                              kwargs={'username': USERNAME})
         cls.POST_DETAIL = reverse('posts:post_detail',
                                   kwargs={'post_id': cls.post.id})
 
@@ -59,7 +59,7 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(post.text, form_data['text'])
         self.assertEqual(post.group.id, form_data['group'])
         self.assertEqual(post.author, self.user)
-        self.assertRedirects(response, self.PROFILE)
+        self.assertRedirects(response, PROFILE)
 
     def test_editing_post(self):
         form_data = {

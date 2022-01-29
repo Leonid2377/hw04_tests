@@ -14,7 +14,7 @@ GROUP_1 = reverse('posts:group',
                   kwargs={'slug': SLUG_1})
 PROFILE = reverse('posts:profile',
                   kwargs={'username': USERNAME})
-TOTAL_POST = NUMBER_POSTS_ON_PAGE + 1
+TOTAL_POSTS = NUMBER_POSTS_ON_PAGE + 1
 
 
 class PostUrlTests(TestCase):
@@ -63,15 +63,17 @@ class PostUrlTests(TestCase):
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
                 if obj == 'page_obj':
-                    post = response.context[obj]
-                    self.assertEqual(len(post), 1)
-                    post = post[0]
+                    posts = response.context[obj]
+                    self.assertEqual(len(posts), 1)
+                    posts = posts[0]
                 elif obj == 'post':
-                    post = response.context['post']
-                self.assertEqual(post.text, self.post.text)
-                self.assertEqual(post.author, self.post.author)
-                self.assertEqual(post.group, self.post.group)
-                self.assertEqual(post.pk, self.post.pk)
+                    posts = response.context['post']
+                self.assertEqual(posts.text, self.post.text)
+                self.assertEqual(posts.author, self.post.author)
+                self.assertEqual(posts.group, self.post.group)
+                self.assertEqual(posts.pk, self.post.pk)
+                self.assertIn(self.group, response.context[obj])
+                self.assertIn(self.post.author, response.context[obj])
 
 
 class PaginatorViewsTest(TestCase):
@@ -83,7 +85,7 @@ class PaginatorViewsTest(TestCase):
             Post(
                 text='Тестовый текст',
                 author=cls.user,
-            ) for i in range(TOTAL_POST)
+            ) for i in range(TOTAL_POSTS)
         ])
 
     def test_first_page_contains_records(self):
@@ -94,5 +96,5 @@ class PaginatorViewsTest(TestCase):
     def test_second_page_contains_records(self):
         response = self.client.get(f'{INDEX}?page=2')
         calculation_len_obj = len(response.context['page_obj'])
-        calculation_obj = TOTAL_POST % NUMBER_POSTS_ON_PAGE
+        calculation_obj = TOTAL_POSTS % NUMBER_POSTS_ON_PAGE
         self.assertEqual(calculation_len_obj, calculation_obj)

@@ -86,7 +86,7 @@ class PostUrlTests(TestCase):
     def test_urls_redirect(self):
         urls_names = [
             [CREATE_POST, self.guest, f'{LOGIN_REDIRECT}?next=/create/'],
-            [self.EDITE_POST, self.another, f'/posts/{self.post.pk}/'],
+            [self.EDITE_POST, self.another, self.POST_DETAIL],
             [self.EDITE_POST,
              self.guest, f'{LOGIN_REDIRECT}?next={self.EDITE_POST}']
         ]
