@@ -66,14 +66,17 @@ class PostUrlTests(TestCase):
                     posts = response.context[obj]
                     self.assertEqual(len(posts), 1)
                     posts = posts[0]
+                    # for obj in responses[]
                 elif obj == 'post':
                     posts = response.context['post']
+                elif url == PROFILE:
+                    self.assertEqual(response.context['author'], self.user)
+                elif url == GROUP:
+                    self.assertEqual(response.context['group'], self.group)
                 self.assertEqual(posts.text, self.post.text)
                 self.assertEqual(posts.author, self.post.author)
                 self.assertEqual(posts.group, self.post.group)
                 self.assertEqual(posts.pk, self.post.pk)
-                self.assertIn(self.group, response.context[obj])
-                self.assertIn(self.post.author, response.context[obj])
 
 
 class PaginatorViewsTest(TestCase):
